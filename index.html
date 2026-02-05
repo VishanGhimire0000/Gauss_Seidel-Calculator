@@ -6,89 +6,104 @@
   <title>Gauss-Seidel Solver</title>
   <style>
     * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    body {
-      background: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-    
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      width: 400px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-      font-size: 24px;
-    }
-    .equation {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    .equation input {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-      text-align: center;
-      transition: 0.3s;
-    }
-    .equation input:focus {
-      border-color: #4a90e2;
-      box-shadow: 0 0 5px rgba(74,144,226,0.5);
-      outline: none;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #4a90e2;
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #357ABD;
-    }
+body {
+  background: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
 
-    #result {
-      margin-top: 20px;
-      background: #f7f7f7;
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 16px;
-      color: #333;
-    }
+.container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 500px;
+}
 
-    @media (max-width: 450px) {
-      .container {
-        width: 90%;
-        padding: 20px;
-      }
-      .equation input {
-        font-size: 14px;
-        padding: 8px;
-      }
-      button {
-        font-size: 16px;
-      }
-    }
+h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-size: 24px;
+}
+
+/* make input rows flexible */
+.equation {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.equation input {
+  flex: 1 1 22%; /* flexible width, wraps on small screens */
+  min-width: 60px; /* avoid getting too small */
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.equation input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74,144,226,0.5);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #4a90e2;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #357ABD;
+}
+
+#result {
+  margin-top: 20px;
+  background: #f7f7f7;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #333;
+  max-height: 200px; /* prevent result overflow */
+  overflow-y: auto;  /* scroll if many iterations */
+}
+
+/* responsive */
+@media (max-width: 450px) {
+  .container {
+    padding: 20px;
+  }
+  .equation input {
+    flex: 1 1 45%; /* two inputs per row */
+    padding: 8px;
+    font-size: 14px;
+  }
+  button {
+    font-size: 16px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -118,51 +133,51 @@
     <div id="result"></div>
   </div>
   <script>
-    function GaussSeidel(){
-        const a1= Number(document.getElementById('a1').value);
-        const b1= Number(document.getElementById('b1').value);
-        const c1= Number(document.getElementById('c1').value);
-        const d1= Number(document.getElementById('d1').value);  
-        const a2= Number(document.getElementById('a2').value);
-        const b2= Number(document.getElementById('b2').value);
-        const c2= Number(document.getElementById('c2').value);
-        const d2= Number(document.getElementById('d2').value);
-        const a3= Number(document.getElementById('a3').value);
-        const b3= Number(document.getElementById('b3').value);
-        const c3= Number(document.getElementById('c3').value);
-        const d3= Number(document.getElementById('d3').value);  
-        var x=0,y=0,z=0,x1=1,y1=1,z1=1; 
-        var i = 1;
-        var tol = 0.001;
-        if (a1 === 0 || b2 === 0 || c3 === 0  ){
-        document.getElementById("result").innerHTML= ("Please enter Non-Zero value in place of a1,b2,c3!");
-}
-else{
-    while (Math.abs(x - x1) > tol || Math.abs(y - y1) > tol || Math.abs(z - z1) > tol){
-        document.getElementById("result").innerHTML= "\nIteration "+i;
-        x1=x , y1=y , z1 = z;      
-        x = Number(((d1-b1*y-c1*z)/a1).toFixed(3));
-        y = Number(((d2-a2*x-c2*z)/b2).toFixed(3));
-        z = Number(((d3-a3*x-b3*y)/c3).toFixed(3));
-        document.getElementById("result").innerHTML = "\nX:"+x+" Y:"+y+" Z:"+z;
-        i++;
+    function GaussSeidel() {
+    const a1 = Number(document.getElementById('a1').value);
+    const b1 = Number(document.getElementById('b1').value);
+    const c1 = Number(document.getElementById('c1').value);
+    const d1 = Number(document.getElementById('d1').value);  
+    const a2 = Number(document.getElementById('a2').value);
+    const b2 = Number(document.getElementById('b2').value);
+    const c2 = Number(document.getElementById('c2').value);
+    const d2 = Number(document.getElementById('d2').value);
+    const a3 = Number(document.getElementById('a3').value);
+    const b3 = Number(document.getElementById('b3').value);
+    const c3 = Number(document.getElementById('c3').value);
+    const d3 = Number(document.getElementById('d3').value);  
+
+    let x = 0, y = 0, z = 0, x1 = 1, y1 = 1, z1 = 1; 
+    let i = 1;
+    const tol = 0.001;
+
+    // clear previous results
+    document.getElementById("result").innerHTML = "";
+
+    if (a1 === 0 || b2 === 0 || c3 === 0) {
+        print("Please enter a non-zero value in a1, b2, c3!");
+    } else {
+      print("The solution is : \n")
+        while (Math.abs(x - x1) > tol || Math.abs(y - y1) > tol || Math.abs(z - z1) > tol) {
+            print("Iteration " + i);
+            x1 = x; y1 = y; z1 = z;      
+            x = Number(((d1 - b1*y - c1*z)/a1).toFixed(3));
+            y = Number(((d2 - a2*x - c2*z)/b2).toFixed(3));
+            z = Number(((d3 - a3*x - b3*y)/c3).toFixed(3));
+            print("X: " + x + "  Y: " + y + "  Z: " + z);
+            i++;
+        }
+        print("Final Solution -> X: " + x + "  Y: " + y + "  Z: " + z);
     }
-    console.log("I: "+i);
-
-    x = Math.round(x);
-    y = Math.round(y);
-    z = Math.round(z);
-    document.getElementById("result").innerHTML= "\nX:"+x+" Y:"+y+" Z:"+z;
-
-
 }
 
-    }
-  function print(){
+function print(text){
     const logDiv = document.getElementById("result");
-    const p= document.createElement("p");
+    const p = document.createElement("p");
     p.textContent = text;
-  }  
+    logDiv.appendChild(p);
+}
+
   </script>
 
 </body>
